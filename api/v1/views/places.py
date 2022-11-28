@@ -53,20 +53,20 @@ def post_place(city_id):
     city = storage.get(City, city_id)
     if city is None:
         return abort(404)
-    if request.get_json():
-        if 'user_id' in request.get_json():
-            if 'name' in request.get_json():
-                places = request.get_json()
-                user = storage.get(User, places['user_id'])
-                if user is None:
-                    return abort(404)
-                places['city_id'] = city_id
-                place = Place(**places)
-                place.save()
-                return make_response(jsonify(place.to_dict()), 201)
-            return make_response(jsonify({"error": "Missing name"}), 400)
+    if not request.get_json():
+        return make_response(jsonify({"error": "Not a JSON"}), 400)
+    if 'user_id' not in request.get_json():
         return make_response(jsonify({"error": "Missing user_id"}), 400)
-    return make_response(jsonify({"error": "Not a JSON"}), 400)
+    if 'name' not in request.get_json():
+        return make_response(jsonify({"error": "Missing name"}), 400)
+    places = request.get_json()
+    user = storage.get(User, places['user_id'])
+    if user is None:
+        abort(404)
+    places['city_id'] = city_id
+    place = Place(**places)
+    place.save()
+    return make_response(jsonify(place.to_dict()), 201)
 
 
 @app_views.route("/places/<place_id>", methods=['PUT'],
@@ -77,10 +77,10 @@ def put_place(place_id):
     if place is None:
         return abort(404)
     request_dict = request.get_json()
-    if request_dict is not None:
-        for key, val in request_dict.items():
-            if key not in ['id', 'created_at', 'updated_at', 'city_id', 'user_id']:
-                setattr(place, key, val)
-        storage.save()
-        return make_response(jsonify(place.to_dict()), 200)
-    return make_response(jsonify({"error": "Not a JSON"}), 400)
+    if request_dict is None:
+        return make_response(jsonify({"error": "Not a JSON"}), 400)
+    for key, val in request_dict.items():
+        if key not in ['id', 'created_at', 'updated_at', 'city_id', 'user_id']:
+            setattr(place, key, val)
+    storage.save()
+    return make_response(jsonify(place.to_dict()), 200)
