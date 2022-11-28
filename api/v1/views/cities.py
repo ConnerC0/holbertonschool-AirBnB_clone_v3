@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-states module that handles all default RESTful API
+city module that handles all default RESTful API
 actions.
 """
 from api.v1.views import app_views
@@ -39,7 +39,6 @@ def get_city_id(city_id):
 
 @app_views.route('/cities/<city_id>',
                  methods=['DELETE'],
-                 strict_slashes=False
                  )
 def delete_city(city_id):
     """Deletes a `State` object."""
@@ -48,7 +47,8 @@ def delete_city(city_id):
         storage.delete(city)
         storage.save()
         return make_response(jsonify({}), 200)
-    abort(404)
+    else:
+        abort(404)
 
 
 @app_views.route('/states/<state_id>/cities/',
