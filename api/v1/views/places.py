@@ -52,14 +52,14 @@ def post_place(city_id):
     """add place using POST"""
     city = storage.get(City, city_id)
     if city is None:
-        abort(404)
+        return abort(404)
     if request.get_json():
         if 'user_id' in request.get_json():
             if 'name' in request.get_json():
                 places = request.get_json()
                 user = storage.get(User, places['user_id'])
                 if user is None:
-                    abort(404)
+                    return abort(404)
                 places['city_id'] = city_id
                 place = Place(**places)
                 place.save()
