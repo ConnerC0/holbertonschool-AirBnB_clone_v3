@@ -25,7 +25,7 @@ def list_cities(state_id):
     return jsonify(result)
     
 
-@app_views.route('/states/<city_id>',
+@app_views.route('/cities/<city_id>',
                  methods=['GET'],
                  strict_slashes=False
                  )
@@ -37,7 +37,7 @@ def get_city_id(city_id):
     abort(404)
 
 
-@app_views.route('/states/<city_id>',
+@app_views.route('/cities/<city_id>',
                  methods=['DELETE'],
                  strict_slashes=False
                  )
@@ -57,12 +57,12 @@ def delete_city(city_id):
                  )
 def create_city_post(state_id):
     """Creates a `State` object."""
-    request_dict = request.get_json()
-    if request_dict is not None:
-        if 'name' in request_dict.keys() and request_dict['name'] is not None:
+    if request.get_json():
+        if 'name' in request.get_json():
             state = storage.get(State, state_id)
             if state is None:
                 return abort(404)
+            request_dict = request.get_json()
             request_dict['state_id'] = state_id
             city = City(**request_dict)
             city.save()
@@ -71,20 +71,20 @@ def create_city_post(state_id):
     return make_response(jsonify({"error": "Not a JSON"}), 400)
 
 
-@app_views.route('/states/<city_id>',
+@app_views.route('/cities/<city_id>',
                  methods=['PUT'],
                  strict_slashes=False
                  )
 def update_city(city_id):
     """Updates a `State` object."""
-    request_dict = request.get_json()
-    if request_dict is not None:
+    if request.get_json():
         city = storage.get(City, city_id)
         if city is None:
             abort(404)
+        request_dict = request.get_json()
         for key, val in request_dict.items():
             if key not in ['id', 'created_at', 'updated_at']:
                 setattr(city, key, val)
         storage.save()
-        return jsonify(city.to_dict())
+        return make_response(jsonify(city.to_dict()), 200)
     return make_response(jsonify({"error": "Not a JSON"}), 400)
