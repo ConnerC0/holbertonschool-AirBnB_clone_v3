@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 """
 places module that handles all default RESTful API
@@ -11,6 +10,7 @@ from models.user import User
 from api.v1.views import app_views
 from flask import jsonify, request, make_response, abort
 from models import storage
+
 
 @app_views.route("/cities/<city_id>/places", methods=['GET'],
                  strict_slashes=False)
