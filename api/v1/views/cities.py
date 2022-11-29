@@ -68,7 +68,7 @@ def create_city_post(state_id):
     request_dict['state_id'] = state_id
     city = City(**request_dict)
     city.save()
-    return make_response(jsonify(request_dict.to_dict()), 201)
+    return make_response(jsonify(city.to_dict()), 201)
 
 
 @app_views.route('/cities/<city_id>',
