@@ -26,7 +26,7 @@ def users(user_id=None):
 
 
 @app_views.route("/users/<user_id>", methods=['DELETE'],
-                strict_slashes=False)
+                 strict_slashes=False)
 def user_delete(user_id):
     """deletes a user by ID"""
     user = storage.get(User, user_id)
@@ -59,7 +59,7 @@ def user_put(user_id):
     if user is None:
         return abort(404)
     if not request.get_json():
-        return make_response(jsonify({"error:" "Not a JSON"}), 400)
+        return make_response(jsonify({"error": "Not a JSON"}), 400)
     request_dict = request.get_json()
     for key, val in request_dict.items():
         if key not in ['id', 'created_at', 'updated_at']:
